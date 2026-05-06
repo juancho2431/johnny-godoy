@@ -1813,11 +1813,25 @@
         margin-top: 18px;
         margin-bottom: 8px;
         padding: 16px;
-        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-columns: repeat(4, auto);
+        justify-content: center;
+        gap: 12px 10px;
+      }
+      .player-now {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        width: 100%;
+        text-align: center;
+      }
+      .player-toggle {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: center;
       }
       .player-actions {
-        grid-column: auto;
-        justify-content: flex-end;
+        grid-column: 2 / -1;
+        grid-row: 2;
+        justify-content: center;
         gap: 8px;
       }
       .player-toggle { width: 46px; height: 46px; }
@@ -1826,7 +1840,11 @@
       .player-title { font-size: .96rem; }
       .player-meta { font-size: .5rem; letter-spacing: .12em; }
       .player-progress {
-        padding: 0 58px;
+        grid-column: 1 / -1;
+        grid-row: 3;
+        width: 100%;
+        grid-template-columns: 34px minmax(0, 1fr) 34px;
+        padding: 0;
         box-sizing: border-box;
       }
 
@@ -2189,7 +2207,7 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6h2v12H7zm3.5 6 8.5 6V6z"/></svg>
           </button>
           <button class="player-mini" id="player-next" type="button" aria-label="Siguiente soundtrack">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6h2v12h-2zm-10 6 8.5 6V6z"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6v12l8.5-6z"/></svg>
           </button>
           <select class="player-speed" id="player-speed" aria-label="Velocidad de reproduccion">
             <option value="0.75">0.75x</option>
