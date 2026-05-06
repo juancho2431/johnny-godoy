@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+
+  <url>
+    <loc>https://juancho2431.github.io/johnny-godoy/</loc>
+    <lastmod>2025-05-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://juancho2431.github.io/johnny-godoy/assets/hero/hero-pc.png</image:loc>
+      <image:title>Johnny Godoy – Cantante de Salsa y Tropical, Bogotá</image:title>
+    </image:image>
+    <video:video>
+      <video:thumbnail_loc>https://juancho2431.github.io/johnny-godoy/assets/logos/poster-bienvenida-favicon.png</video:thumbnail_loc>
+      <video:title>Mensaje de Bienvenida – Johnny Godoy</video:title>
+      <video:description>Mensaje de bienvenida de Johnny Godoy, cantante de salsa y música tropical bogotano.</video:description>
+      <video:content_loc>https://media.githubusercontent.com/media/juancho2431/johnny-godoy/main/assets/video/johnny_bienvenida_h264.mp4</video:content_loc>
+      <video:publication_date>2025-05-06T00:00:00+00:00</video:publication_date>
+    </video:video>
+  </url>
+
+  <url>
+    <loc>https://juancho2431.github.io/johnny-godoy/recursos.html</loc>
+    <lastmod>2025-05-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
