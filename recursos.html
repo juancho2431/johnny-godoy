@@ -496,9 +496,12 @@
     function mediaMarkup(item) {
       const kind = item.type === 'photo' ? 'Foto' : 'Video';
       const position = photoFrame[item.src] || 'center center';
+      const src = item.type === 'video'
+        ? `https://media.githubusercontent.com/media/juancho2431/johnny-godoy/main/${item.src}`
+        : item.src;
       const media = item.type === 'photo'
-        ? `<img class="lazy-media" data-src="${item.src}" alt="${item.title}" loading="lazy" decoding="async" style="object-position:${position}">`
-        : `<video class="lazy-media" data-src="${item.src}" controls playsinline preload="none"></video>`;
+        ? `<img class="lazy-media" data-src="${src}" alt="${item.title}" loading="lazy" decoding="async" style="object-position:${position}">`
+        : `<video class="lazy-media" data-src="${src}" controls playsinline preload="metadata"></video>`;
       return `
         <article class="media-card is-${item.type}">
           <div class="media-frame">
