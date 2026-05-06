@@ -1674,18 +1674,46 @@
         --nav-space: 64px;
       }
       /* Nav hamburguesa */
-      nav { padding: 12px 20px; }
-      nav.scrolled { padding: 12px 20px; }
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 700;
+        padding: 12px 20px;
+        background: #000;
+      }
+      nav.scrolled,
+      nav.menu-open {
+        padding: 12px 20px;
+        background: #000;
+        border-bottom-color: rgba(200,168,75,.18);
+      }
       .nav-toggle { display: flex; }
       .nav-logo { width: 154px; }
+      .nav-logo,
+      .nav-toggle { z-index: 710; }
       .nav-links {
-        position: fixed; inset: 0; z-index: 490;
+        position: fixed; inset: 0; z-index: 690;
         background: #000;
         flex-direction: column; align-items: center; justify-content: center;
-        gap: 40px; display: none;
+        gap: 40px; display: flex;
+        min-height: 100vh;
+        min-height: 100svh;
+        padding: var(--nav-space) 20px 40px;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity .25s ease, visibility .25s ease;
       }
-      .nav-links.open { display: flex; }
+      .nav-links.open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
       .nav-links a { font-size: 1.1rem; letter-spacing: .25em; color: var(--fg); }
+      body { padding-top: var(--nav-space); }
+      body.nav-open { overflow: hidden; }
 
       /* Hero — la altura hereda de ≤900px, solo se ajusta si el nav cambia */
       #hero { min-height: 560px; }
@@ -1900,7 +1928,7 @@
     <li><a href="#servicios-scene">Servicios</a></li>
     <li><a href="#contacto">Contacto</a></li>
   </ul>
-  <button class="nav-toggle" id="nav-toggle" aria-label="Menú">
+  <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Menú" aria-controls="nav-links" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -2773,14 +2801,23 @@
   // ─── Nav hamburguesa ───
   const navToggle = document.getElementById('nav-toggle');
   const navLinksEl = document.getElementById('nav-links');
+  const navEl = document.getElementById('nav');
+  const setMobileNavOpen = (isOpen) => {
+    navToggle.classList.toggle('open', isOpen);
+    navLinksEl.classList.toggle('open', isOpen);
+    navEl.classList.toggle('menu-open', isOpen);
+    document.body.classList.toggle('nav-open', isOpen);
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  };
   navToggle.addEventListener('click', () => {
-    navToggle.classList.toggle('open');
-    navLinksEl.classList.toggle('open');
+    setMobileNavOpen(!navLinksEl.classList.contains('open'));
   });
   navLinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    navToggle.classList.remove('open');
-    navLinksEl.classList.remove('open');
+    setMobileNavOpen(false);
   }));
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setMobileNavOpen(false);
+  });
 
   // Recalcular morph y scroll al redimensionar
   window.addEventListener('resize', () => { heroRect = null; scheduleMorph(); updateHorizontalScrolls(); });
