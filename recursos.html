@@ -117,7 +117,9 @@
       color: rgba(242,236,225,.78);
       font-size: clamp(.98rem, 1.8vw, 1.14rem);
       line-height: 1.65;
+      text-align: justify;
       overflow-wrap: break-word;
+      hyphens: auto;
     }
     .stats {
       display: grid;
@@ -237,7 +239,44 @@
       opacity: 1;
       transform: scale(1);
     }
-    video.lazy-media { object-fit: cover; }
+    video.lazy-media {
+      object-fit: cover;
+      pointer-events: none;
+    }
+    .media-play {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.34));
+      color: var(--gold2);
+      cursor: pointer;
+    }
+    .media-play::before {
+      content: '';
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 1px solid rgba(240,215,127,.74);
+      background: rgba(9,11,14,.58);
+      box-shadow: 0 0 0 8px rgba(240,215,127,.08), 0 18px 46px rgba(0,0,0,.42);
+      transition: transform .25s, background .25s;
+    }
+    .media-play::after {
+      content: '';
+      position: absolute;
+      margin-left: 4px;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-left: 18px solid currentColor;
+    }
+    .media-card.is-video:hover .media-play::before {
+      transform: scale(1.06);
+      background: rgba(9,11,14,.72);
+    }
     .badge {
       position: absolute;
       left: 12px;
@@ -358,18 +397,24 @@
       transform-origin: top left;
       will-change: transform;
     }
-    .lightbox-frame img {
+    .lightbox-frame img,
+    .lightbox-frame video {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      display: block;
+      display: none;
       background: #050608;
       border: 1px solid rgba(240,215,127,.2);
       box-shadow: 0 30px 90px rgba(0,0,0,.58);
       cursor: zoom-out;
     }
+    .lightbox-frame[data-kind="photo"] img,
+    .lightbox-frame[data-kind="video"] video {
+      display: block;
+    }
     .lightbox-close { display: none; }
-    .media-card.is-photo { cursor: zoom-in; }
+    .media-card.is-photo,
+    .media-card.is-video { cursor: zoom-in; }
     .lazy-media.is-lightbox-source { visibility: hidden; }
   </style>
 </head>
@@ -411,10 +456,11 @@
     </section>
   </main>
 
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Recurso ampliado">
     <div class="lightbox-overlay" id="lightbox-overlay"></div>
     <div class="lightbox-frame" id="lightbox-frame">
       <img id="lightbox-img" src="" alt="">
+      <video id="lightbox-video" controls playsinline preload="metadata"></video>
       <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">&#215;</button>
     </div>
   </div>
@@ -510,7 +556,7 @@
         : item.src;
       const media = item.type === 'photo'
         ? `<img class="lazy-media" data-src="${src}" alt="${item.title}" loading="lazy" decoding="async" style="object-position:${position}">`
-        : `<video class="lazy-media" data-src="${src}" controls playsinline preload="metadata"></video>`;
+        : `<video class="lazy-media" data-src="${src}" muted playsinline preload="metadata"></video><button class="media-play" type="button" aria-label="Reproducir ${item.title}"></button>`;
       return `
         <article class="media-card is-${item.type}">
           <div class="media-frame">
@@ -624,14 +670,16 @@
       lb.className = 'lightbox';
       lb.setAttribute('role', 'dialog');
       lb.setAttribute('aria-modal', 'true');
-      lb.setAttribute('aria-label', 'Imagen ampliada');
-      lb.innerHTML = '<div class="lightbox-overlay" id="lightbox-overlay"></div><div class="lightbox-frame" id="lightbox-frame"><img id="lightbox-img" src="" alt=""><button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">&#215;</button></div>';
+      lb.setAttribute('aria-label', 'Recurso ampliado');
+      lb.innerHTML = '<div class="lightbox-overlay" id="lightbox-overlay"></div><div class="lightbox-frame" id="lightbox-frame"><img id="lightbox-img" src="" alt=""><video id="lightbox-video" controls playsinline preload="metadata"></video><button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">&#215;</button></div>';
       document.body.appendChild(lb);
     }
     const lbImg = document.getElementById('lightbox-img');
+    const lbVideo = document.getElementById('lightbox-video');
     const lbFrame = document.getElementById('lightbox-frame');
     const lbCloseBtn = document.getElementById('lightbox-close');
-    let activeLightboxImage = null;
+    let activeLightboxMedia = null;
+    let activeLightboxKind = 'photo';
     let lightboxAnimation = null;
 
     function applyFrameBase(rect) {
@@ -641,16 +689,32 @@
       lbFrame.style.height = `${rect.height}px`;
     }
 
-    function getTargetRect(sourceImg) {
+    function getLightboxSrc(sourceMedia) {
+      if (!sourceMedia) return '';
+      if (sourceMedia.tagName === 'VIDEO') {
+        return sourceMedia.currentSrc || sourceMedia.querySelector('source')?.src || sourceMedia.dataset.src || '';
+      }
+      return sourceMedia.currentSrc || sourceMedia.src || sourceMedia.dataset.src || '';
+    }
+
+    function getMediaRatio(sourceMedia) {
+      const sourceRect = sourceMedia.getBoundingClientRect();
+      if (activeLightboxKind === 'video') {
+        if (lbVideo.videoWidth && lbVideo.videoHeight) return lbVideo.videoWidth / lbVideo.videoHeight;
+        if (sourceMedia.videoWidth && sourceMedia.videoHeight) return sourceMedia.videoWidth / sourceMedia.videoHeight;
+      }
+      if (lbImg.naturalWidth && lbImg.naturalHeight) return lbImg.naturalWidth / lbImg.naturalHeight;
+      if (sourceMedia.naturalWidth && sourceMedia.naturalHeight) return sourceMedia.naturalWidth / sourceMedia.naturalHeight;
+      return Math.max(.2, sourceRect.width / Math.max(1, sourceRect.height));
+    }
+
+    function getTargetRect(sourceMedia) {
       const vw = window.innerWidth || document.documentElement.clientWidth;
       const vh = window.innerHeight || document.documentElement.clientHeight;
       const margin = vw <= 620 ? 18 : 42;
       const maxW = vw - margin * 2;
       const maxH = vh - margin * 2;
-      const sourceRect = sourceImg.getBoundingClientRect();
-      const ratio = (lbImg.naturalWidth && lbImg.naturalHeight)
-        ? lbImg.naturalWidth / lbImg.naturalHeight
-        : Math.max(.2, sourceRect.width / Math.max(1, sourceRect.height));
+      const ratio = getMediaRatio(sourceMedia);
       let width = maxW;
       let height = width / ratio;
       if (height > maxH) {
@@ -674,22 +738,40 @@
       };
     }
 
-    function lbOpen(sourceImg) {
-      const src = sourceImg.currentSrc || sourceImg.src || sourceImg.dataset.src;
+    function resetLightboxMedia() {
+      lbImg.onload = null;
+      lbImg.removeAttribute('src');
+      lbImg.alt = '';
+      lbVideo.pause();
+      lbVideo.removeAttribute('src');
+      lbVideo.load();
+      lbFrame.removeAttribute('data-kind');
+    }
+
+    function lbOpen(sourceMedia, kind = 'photo') {
+      const src = getLightboxSrc(sourceMedia);
       if (!src) return;
       if (lightboxAnimation) lightboxAnimation.cancel();
-      activeLightboxImage = sourceImg;
-      const startRect = sourceImg.getBoundingClientRect();
-      lbImg.onload = null;
-      lbImg.src = src;
-      lbImg.alt = sourceImg.alt || '';
+      activeLightboxMedia = sourceMedia;
+      activeLightboxKind = kind;
+      const startRect = sourceMedia.getBoundingClientRect();
+      resetLightboxMedia();
+      lbFrame.dataset.kind = kind;
+      if (kind === 'video') {
+        lbVideo.src = src;
+        lbVideo.currentTime = 0;
+        lbVideo.load();
+      } else {
+        lbImg.src = src;
+        lbImg.alt = sourceMedia.alt || '';
+      }
       lb.classList.remove('is-closing', 'is-expanded');
       lb.classList.add('is-open');
       document.body.style.overflow = 'hidden';
-      sourceImg.classList.add('is-lightbox-source');
+      sourceMedia.classList.add('is-lightbox-source');
 
       const animateOpen = () => {
-        const targetRect = getTargetRect(sourceImg);
+        const targetRect = getTargetRect(sourceMedia);
         const motion = matrixFromTo(startRect, targetRect);
         applyFrameBase(targetRect);
         lbFrame.style.transform = motion.start;
@@ -720,15 +802,19 @@
         });
       };
 
-      if (lbImg.complete && lbImg.naturalWidth) animateOpen();
+      if (kind === 'video') {
+        animateOpen();
+        lbVideo.play().catch(() => {});
+      } else if (lbImg.complete && lbImg.naturalWidth) animateOpen();
       else lbImg.onload = animateOpen;
     }
 
     function lbClose() {
       if (!lb.classList.contains('is-open')) return;
       if (lightboxAnimation) lightboxAnimation.cancel();
-      const targetRect = activeLightboxImage && document.body.contains(activeLightboxImage)
-        ? activeLightboxImage.getBoundingClientRect()
+      lbVideo.pause();
+      const targetRect = activeLightboxMedia && document.body.contains(activeLightboxMedia)
+        ? activeLightboxMedia.getBoundingClientRect()
         : lbFrame.getBoundingClientRect();
       const currentRect = lbFrame.getBoundingClientRect();
       const motion = matrixFromTo(targetRect, currentRect);
@@ -741,7 +827,7 @@
         { transform: motion.end, borderRadius: '0px' },
         { transform: motion.start, borderRadius: '6px' }
       ], {
-          duration: 900,
+        duration: 900,
         easing: 'cubic-bezier(.16,1,.3,1)',
         fill: 'forwards'
       });
@@ -754,24 +840,23 @@
         fill: 'forwards'
       });
       lightboxAnimation.onfinish = () => {
-        activeLightboxImage?.classList.remove('is-lightbox-source');
+        activeLightboxMedia?.classList.remove('is-lightbox-source');
         lb.classList.remove('is-open', 'is-closing');
-        lbImg.onload = null;
-        lbImg.src = '';
-        activeLightboxImage = null;
+        resetLightboxMedia();
+        activeLightboxMedia = null;
         lbFrame.removeAttribute('style');
         document.body.style.overflow = '';
         lightboxAnimation = null;
       };
       lightboxAnimation.oncancel = () => {
-        activeLightboxImage?.classList.remove('is-lightbox-source');
+        activeLightboxMedia?.classList.remove('is-lightbox-source');
         lightboxAnimation = null;
       };
     }
 
     window.addEventListener('resize', () => {
-      if (!lb.classList.contains('is-open') || !activeLightboxImage) return;
-      const targetRect = getTargetRect(activeLightboxImage);
+      if (!lb.classList.contains('is-open') || !activeLightboxMedia) return;
+      const targetRect = getTargetRect(activeLightboxMedia);
       applyFrameBase(targetRect);
       lbFrame.style.transform = `translate3d(${targetRect.left}px, ${targetRect.top}px, 0) scale(1, 1)`;
     });
@@ -781,14 +866,21 @@
       lbClose();
     });
     lbCloseBtn.addEventListener('click', e => { e.stopPropagation(); lbClose(); });
+    lbVideo.addEventListener('ended', lbClose);
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && lb.classList.contains('is-open')) lbClose(); });
 
     grid.addEventListener('click', e => {
-      const card = e.target.closest('.media-card.is-photo');
-      if (!card) return;
-      const img = card.querySelector('img.lazy-media');
+      const videoCard = e.target.closest('.media-card.is-video');
+      if (videoCard) {
+        const video = videoCard.querySelector('video.lazy-media');
+        if (video) lbOpen(video, 'video');
+        return;
+      }
+      const photoCard = e.target.closest('.media-card.is-photo');
+      if (!photoCard) return;
+      const img = photoCard.querySelector('img.lazy-media');
       if (!img) return;
-      lbOpen(img);
+      lbOpen(img, 'photo');
     });
   </script>
 
