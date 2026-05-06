@@ -1776,7 +1776,10 @@
       }
 
       /* Música — carrusel compacto */
-      #musica-scene { padding: 70px 0 18px; }
+      #musica-scene {
+        --soundtrack-card-width: clamp(248px, 70vw, 270px);
+        padding: 70px 0 18px;
+      }
       #musica-scene::before,
       #musica-scene::after { display: none; }
       #musica-sticky { min-height: auto; }
@@ -1784,21 +1787,27 @@
       .soundtrack-sub { max-width: 330px; margin-left: auto; margin-right: auto; }
       .musica-header { margin-bottom: 26px; padding: 0 20px; }
       .tracks-shell {
-        padding: 0 34px;
+        padding: 0 24px;
         width: 100%;
       }
       .tracks-wrapper {
         min-height: 440px;
         overflow: visible;
+        padding: 0;
       }
       .tracks-row { gap: 14px; }
       .track-card {
-        flex-basis: min(72vw, 270px);
+        flex-basis: var(--soundtrack-card-width);
         min-height: 368px;
       }
-      .track-card.is-active { transform: scale(1.04); }
+      .track-card.is-active { transform: scale(1); }
       .track-card.is-before,
-      .track-card.is-after { transform: scale(.82); }
+      .track-card.is-after {
+        opacity: .68;
+        filter: saturate(.75) brightness(.78);
+      }
+      .track-card.is-before { transform: translateX(18px) scale(.78) rotateY(8deg); }
+      .track-card.is-after { transform: translateX(-18px) scale(.78) rotateY(-8deg); }
       .track-cover { aspect-ratio: 1.05; }
       .track-name { font-size: 1.35rem; }
       .track-info { padding: 20px 20px 24px; }
@@ -1809,13 +1818,14 @@
       .soundtrack-nav.prev { left: 6px; }
       .soundtrack-nav.next { right: 6px; }
       .soundtrack-player {
-        width: calc(100% - 32px);
+        width: var(--soundtrack-card-width);
         margin-top: 18px;
         margin-bottom: 8px;
-        padding: 16px;
+        padding: 15px 14px;
         grid-template-columns: repeat(4, auto);
         justify-content: center;
-        gap: 12px 10px;
+        gap: 12px 8px;
+        box-sizing: border-box;
       }
       .player-now {
         grid-column: 1 / -1;
@@ -1834,9 +1844,9 @@
         justify-content: center;
         gap: 8px;
       }
-      .player-toggle { width: 46px; height: 46px; }
-      .player-mini { width: 32px; height: 32px; }
-      .player-speed { width: 74px; height: 32px; font-size: .52rem; }
+      .player-toggle { width: 44px; height: 44px; }
+      .player-mini { width: 30px; height: 30px; }
+      .player-speed { width: 68px; height: 30px; font-size: .5rem; }
       .player-title { font-size: .96rem; }
       .player-meta { font-size: .5rem; letter-spacing: .12em; }
       .player-progress {
