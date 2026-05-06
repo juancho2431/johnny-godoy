@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recursos | Johnny Godoy</title>
+  <link rel="icon" type="image/png" href="assets/logos/favicon-jg-dorado.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gold: #c8a84b;
+      --gold2: #f0d77f;
+      --ink: #090b0e;
+      --ink2: #10151a;
+      --ink3: #171f26;
+      --cream: #f2ece1;
+      --muted: #a9b2af;
+      --teal: #4db6ac;
+      --wine: #8b2f46;
+      --line: rgba(240, 215, 127, .18);
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+    html { scroll-behavior: smooth; background: var(--ink); }
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(9,11,14,.58), var(--ink) 42%),
+        url("assets/fotos/recursos/_JUN0125.jpg") center top / min(1700px, 170vw) auto no-repeat,
+        var(--ink);
+      color: var(--cream);
+      font-family: var(--sans);
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+    a { color: inherit; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 16px clamp(18px, 4vw, 56px);
+      background: rgba(9,11,14,.82);
+      border-bottom: 1px solid rgba(240,215,127,.14);
+      backdrop-filter: blur(18px);
+    }
+    .brand {
+      display: block;
+      width: clamp(160px, 17vw, 240px);
+      line-height: 0;
+    }
+    .brand img { width: 100%; height: auto; display: block; }
+    .toplink {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      border: 1px solid rgba(240,215,127,.3);
+      color: var(--gold2);
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: .62rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: rgba(9,11,14,.52);
+    }
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      min-width: 0;
+    }
+    .hero {
+      min-height: min(680px, calc(100svh - 70px));
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: end;
+      padding: clamp(70px, 12vh, 132px) 0 42px;
+      overflow: hidden;
+    }
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: .64rem;
+      letter-spacing: .42em;
+      text-transform: uppercase;
+      color: var(--gold2);
+      margin-bottom: 18px;
+    }
+    h1 {
+      max-width: 900px;
+      font-family: var(--serif);
+      font-weight: 900;
+      font-size: clamp(3.1rem, 10vw, 8.8rem);
+      line-height: .82;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-shadow: 0 26px 70px rgba(0,0,0,.62);
+      overflow-wrap: break-word;
+    }
+    .intro {
+      width: min(620px, 100%);
+      margin-top: 24px;
+      color: rgba(242,236,225,.78);
+      font-size: clamp(.98rem, 1.8vw, 1.14rem);
+      line-height: 1.65;
+      overflow-wrap: break-word;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      margin-top: 34px;
+      width: min(680px, 100%);
+      background: rgba(240,215,127,.14);
+      border: 1px solid rgba(240,215,127,.16);
+    }
+    .stat {
+      padding: 18px 20px;
+      background: rgba(9,11,14,.78);
+    }
+    .stat strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: .9;
+      color: var(--gold2);
+    }
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      font-family: var(--mono);
+      font-size: .58rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .resource-band {
+      padding: 26px 0 86px;
+      background:
+        linear-gradient(90deg, rgba(77,182,172,.08), transparent 35%, rgba(139,47,70,.09)),
+        linear-gradient(180deg, rgba(16,21,26,.94), var(--ink));
+      border-top: 1px solid rgba(240,215,127,.12);
+    }
+    .resource-toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tab {
+      min-height: 38px;
+      padding: 0 16px;
+      border: 1px solid rgba(240,215,127,.2);
+      background: rgba(9,11,14,.52);
+      color: rgba(242,236,225,.72);
+      font-family: var(--mono);
+      font-size: .6rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .tab.is-active {
+      border-color: rgba(77,182,172,.7);
+      color: var(--cream);
+      background: rgba(77,182,172,.14);
+    }
+    .counter {
+      font-family: var(--mono);
+      font-size: .62rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(242,236,225,.58);
+      text-align: right;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+      min-height: 480px;
+    }
+    .media-card {
+      grid-column: span 4;
+      min-width: 0;
+      border: 1px solid rgba(240,215,127,.14);
+      background: var(--ink2);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 22px 64px rgba(0,0,0,.26);
+    }
+    .media-frame {
+      aspect-ratio: 16 / 9;
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(200,168,75,.12), transparent 44%),
+        linear-gradient(180deg, var(--ink3), var(--ink2));
+      overflow: hidden;
+    }
+    .media-card.is-photo .media-frame {
+      background:
+        radial-gradient(circle at 50% 24%, rgba(200,168,75,.12), transparent 44%),
+        linear-gradient(145deg, #07090b, var(--ink2));
+    }
+    .lazy-media {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.018);
+      transition: opacity .45s, transform .6s;
+      background: #050608;
+    }
+    .media-card.is-photo .lazy-media {
+      object-fit: cover;
+    }
+    .lazy-media.is-loaded {
+      opacity: 1;
+      transform: scale(1);
+    }
+    video.lazy-media { object-fit: cover; }
+    .badge {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      z-index: 2;
+      padding: 5px 9px;
+      background: rgba(9,11,14,.72);
+      border: 1px solid rgba(240,215,127,.28);
+      color: var(--gold2);
+      font-family: var(--mono);
+      font-size: .52rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .media-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 14px 15px;
+      border-top: 1px solid rgba(240,215,127,.1);
+    }
+    .media-title {
+      min-width: 0;
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.12rem;
+      line-height: 1.08;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .media-kind {
+      flex: 0 0 auto;
+      font-family: var(--mono);
+      font-size: .54rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .page-btn {
+      min-width: 40px;
+      height: 40px;
+      border: 1px solid rgba(240,215,127,.2);
+      background: rgba(9,11,14,.56);
+      color: rgba(242,236,225,.76);
+      font-family: var(--mono);
+      font-size: .66rem;
+      cursor: pointer;
+    }
+    .page-btn.is-current {
+      border-color: rgba(77,182,172,.72);
+      color: var(--cream);
+      background: rgba(77,182,172,.16);
+    }
+    .page-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+    .empty {
+      grid-column: 1 / -1;
+      padding: 70px 24px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px solid rgba(240,215,127,.14);
+      background: rgba(16,21,26,.7);
+    }
+    @media (max-width: 900px) {
+      .resource-toolbar { grid-template-columns: 1fr; }
+      .counter { text-align: left; }
+      .media-card { grid-column: span 6; }
+    }
+    @media (max-width: 620px) {
+      .topbar { padding: 14px 18px; }
+      .brand { width: 152px; }
+      .toplink { min-height: 34px; padding: 0 12px; font-size: .55rem; }
+      .shell { width: min(100% - 28px, 1180px); }
+      .hero { min-height: 560px; padding-bottom: 30px; }
+      h1 { font-size: clamp(2.8rem, 12vw, 3.15rem); }
+      .intro { width: min(330px, 100%); font-size: .96rem; line-height: 1.55; }
+      .stats { grid-template-columns: 1fr; }
+      .stat { padding: 14px 16px; }
+      .grid { gap: 10px; }
+      .media-card { grid-column: 1 / -1; }
+    }
+
+    /* ─── LIGHTBOX ─── */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .12s linear;
+    }
+    .lightbox.is-open { opacity: 1; pointer-events: auto; }
+    .lightbox.is-closing { opacity: 1; pointer-events: none; }
+    .lightbox-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.76);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      transition: opacity .55s cubic-bezier(.16,1,.3,1);
+    }
+    .lightbox.is-open .lightbox-overlay { opacity: 1; }
+    .lightbox.is-closing .lightbox-overlay { opacity: 0; }
+    .lightbox-frame {
+      position: fixed;
+      z-index: 1;
+      overflow: hidden;
+      transform-origin: top left;
+      will-change: transform;
+    }
+    .lightbox-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #050608;
+      border: 1px solid rgba(240,215,127,.2);
+      box-shadow: 0 30px 90px rgba(0,0,0,.58);
+      cursor: zoom-out;
+    }
+    .lightbox-close { display: none; }
+    .media-card.is-photo { cursor: zoom-in; }
+    .lazy-media.is-lightbox-source { visibility: hidden; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Johnny Godoy">
+      <img src="assets/logos/logo-nombre-completo-dorado.png" alt="Johnny Godoy">
+    </a>
+    <a class="toplink" href="index.html#galeria">Volver</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="shell">
+        <p class="eyebrow">Memorias del escenario</p>
+        <h1>Galería completa</h1>
+        <p class="intro">El archivo audiovisual de Johnny Godoy — cada foto y cada video capturando la magia de sus presentaciones en vivo.</p>
+        <div class="stats" aria-label="Resumen de recursos">
+          <div class="stat"><strong id="photo-count">0</strong><span>Fotos</span></div>
+          <div class="stat"><strong id="video-count">0</strong><span>Videos</span></div>
+          <div class="stat"><strong id="total-count">0</strong><span>Total</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="resource-band" id="recursos">
+      <div class="shell">
+        <div class="resource-toolbar">
+          <div class="tabs" aria-label="Filtros de recursos">
+            <button class="tab is-active" type="button" data-filter="all">Todo</button>
+            <button class="tab" type="button" data-filter="photo">Fotos</button>
+            <button class="tab" type="button" data-filter="video">Videos</button>
+          </div>
+          <div class="counter" id="resource-counter">0 recursos</div>
+        </div>
+        <div class="grid" id="resource-grid" aria-live="polite"></div>
+        <div class="pagination" id="pagination" aria-label="Paginacion"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
+    <div class="lightbox-overlay" id="lightbox-overlay"></div>
+    <div class="lightbox-frame" id="lightbox-frame">
+      <img id="lightbox-img" src="" alt="">
+      <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">&#215;</button>
+    </div>
+  </div>
+
+  <script>
+    const resources = [
+      { type: 'photo', src: 'assets/fotos/recursos/_JUN0125.jpg', title: 'Noche de escenario encendido' },
+      { type: 'photo', src: 'assets/fotos/recursos/DAOYE1784.jpg', title: 'La mirada del artista' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_0075.jpg', title: 'Pura energía tropical' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_0258.jpg', title: 'Entre melodías y aplausos' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_0934.jpg', title: 'El sabor de la salsa' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_1207.jpg', title: 'Un momento para la historia' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_2017.jpg', title: 'Sobre las tablas del escenario' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_2411.jpg', title: 'Cuando la voz lo dice todo' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_2832.jpg', title: 'Ritmo que mueve el alma' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_3929.jpg', title: 'El artista y su público' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_4813.jpg', title: 'Intensidad en cada nota' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_7067.jpg', title: 'Alma tropical en vivo' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_E0002.jpg', title: 'Primera nota de la noche' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_E0274.jpg', title: 'Fuego sobre la tarima' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_E2948.jpg', title: 'Tarde de sabor y sentimiento' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_E3478.jpg', title: 'Conexión con el corazón' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_E6657.jpg', title: 'Viviendo la salsa a full' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_E8392.jpg', title: 'Entre bambalinas y ovaciones' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_E8873.jpg', title: 'Instante de gloria artística' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_E9562.jpg', title: 'El corazón de la orquesta' },
+      { type: 'photo', src: 'assets/fotos/recursos/IMG_E9586.jpg', title: 'Telón final, ovación eterna' },
+      { type: 'photo', src: 'assets/fotos/recursos/OWDB8683.jpg', title: 'La banda completa en acción' },
+      { type: 'photo', src: 'assets/fotos/recursos/TPLM2832.jpg', title: 'Explosión de sabor tropical' },
+      { type: 'photo', src: 'assets/fotos/recursos/WIHV8281.jpg', title: 'Mirando hacia el próximo show' },
+      { type: 'photo', src: 'assets/fotos/recursos/WVGU3846.jpg', title: 'El show que no se olvida' },
+      { type: 'video', src: 'assets/videos/BNSH0973.mp4', title: 'El primer compás de la noche' },
+      { type: 'video', src: 'assets/videos/DOHU8755.mp4', title: 'Ritmo que conmueve el alma' },
+      { type: 'video', src: 'assets/videos/FVPZ4928.mp4', title: 'En el corazón del escenario' },
+      { type: 'video', src: 'assets/videos/GJXZ7022.mp4', title: 'Momento de pura salsa' },
+      { type: 'video', src: 'assets/videos/IMG_0506.mp4', title: 'La voz en plena acción' },
+      { type: 'video', src: 'assets/videos/IMG_1363.mp4', title: 'Show completo e intenso' },
+      { type: 'video', src: 'assets/videos/JLZW2213.mp4', title: 'Cuando la música toca el alma' },
+      { type: 'video', src: 'assets/videos/JSGU5089.mp4', title: 'Tropicales en vivo' },
+      { type: 'video', src: 'assets/videos/KJYA9770.mp4', title: 'Noche de sabor y swing' },
+      { type: 'video', src: 'assets/videos/OLTP4584.mp4', title: 'La orquesta que hace bailar' },
+      { type: 'video', src: 'assets/videos/OMES1981.mp4', title: 'Crónica de un concierto memorable' },
+      { type: 'video', src: 'assets/videos/OYTF0081.mp4', title: 'El ritmo te lleva' },
+      { type: 'video', src: 'assets/videos/QGOO9174.mp4', title: 'Melodía para el recuerdo' },
+      { type: 'video', src: 'assets/videos/QVUT2168.mp4', title: 'Johnny en su máxima expresión' },
+      { type: 'video', src: 'assets/videos/TEUY8588.mp4', title: 'Energía tropical desbordante' },
+      { type: 'video', src: 'assets/videos/TMHB2117.mp4', title: 'La salsa es el idioma del alma' },
+      { type: 'video', src: 'assets/videos/UJTC5568.mp4', title: 'Bajo las luces del escenario' },
+      { type: 'video', src: 'assets/videos/UPQE9223.mp4', title: 'Vibración de tarima' },
+      { type: 'video', src: 'assets/videos/WHZA6589.mp4', title: 'Noche que no se olvida' },
+      { type: 'video', src: 'assets/videos/YHLT0715.mp4', title: 'El sabor de un show en vivo' },
+      { type: 'video', src: 'assets/videos/YHVP0567.mp4', title: 'Canto que queda en el corazón' },
+      { type: 'video', src: 'assets/videos/YKJR0159.mp4', title: 'Fin de fiesta, inicio de leyenda' }
+    ];
+
+    const state = { filter: 'all', page: 1 };
+    const grid = document.getElementById('resource-grid');
+    const pagination = document.getElementById('pagination');
+    const counter = document.getElementById('resource-counter');
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    const photoCount = resources.filter(item => item.type === 'photo').length;
+    const videoCount = resources.filter(item => item.type === 'video').length;
+    document.getElementById('photo-count').textContent = photoCount;
+    document.getElementById('video-count').textContent = videoCount;
+    document.getElementById('total-count').textContent = resources.length;
+
+    function perPage() {
+      return window.matchMedia('(max-width: 620px)').matches ? 6 : 12;
+    }
+
+    function visibleItems() {
+      return state.filter === 'all'
+        ? resources
+        : resources.filter(item => item.type === state.filter);
+    }
+
+    const photoFrame = {
+      'assets/fotos/recursos/_JUN0125.jpg': '42% 34%',
+      'assets/fotos/recursos/IMG_4813.jpg': '48% 18%',
+      'assets/fotos/recursos/OWDB8683.jpg': 'center 42%',
+      'assets/fotos/recursos/IMG_2017.jpg': 'center 18%',
+      'assets/fotos/recursos/IMG_E0274.jpg': 'center 20%',
+      'assets/fotos/recursos/IMG_2411.jpg': 'center 30%',
+      'assets/fotos/recursos/IMG_E8873.jpg': 'center 32%',
+      'assets/fotos/recursos/TPLM2832.jpg': 'center 18%'
+    };
+
+    function mediaMarkup(item) {
+      const kind = item.type === 'photo' ? 'Foto' : 'Video';
+      const position = photoFrame[item.src] || 'center center';
+      const media = item.type === 'photo'
+        ? `<img class="lazy-media" data-src="${item.src}" alt="${item.title}" loading="lazy" decoding="async" style="object-position:${position}">`
+        : `<video class="lazy-media" data-src="${item.src}" controls playsinline preload="none"></video>`;
+      return `
+        <article class="media-card is-${item.type}">
+          <div class="media-frame">
+            <span class="badge">${kind}</span>
+            ${media}
+          </div>
+          <div class="media-info">
+            <h2 class="media-title">${item.title}</h2>
+            ${item.type === 'video' ? `<span class="media-kind">${kind}</span>` : ''}
+          </div>
+        </article>
+      `;
+    }
+
+    function lazyLoadMedia() {
+      const nodes = Array.from(grid.querySelectorAll('.lazy-media'));
+      const load = node => {
+        if (node.dataset.loaded) return;
+        node.dataset.loaded = 'true';
+        if (node.tagName === 'VIDEO') {
+          const source = document.createElement('source');
+          source.src = node.dataset.src;
+          source.type = 'video/mp4';
+          node.appendChild(source);
+          node.load();
+          node.classList.add('is-loaded');
+        } else {
+          node.addEventListener('load', () => node.classList.add('is-loaded'), { once: true });
+          node.src = node.dataset.src;
+        }
+      };
+
+      if (!('IntersectionObserver' in window)) {
+        nodes.forEach(load);
+        return;
+      }
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          load(entry.target);
+          observer.unobserve(entry.target);
+        });
+      }, { rootMargin: '300px 0px' });
+
+      nodes.forEach(node => observer.observe(node));
+    }
+
+    function renderPagination(totalPages) {
+      if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+      }
+      let buttons = `<button class="page-btn" type="button" data-page="prev" ${state.page === 1 ? 'disabled' : ''}>Prev</button>`;
+      for (let page = 1; page <= totalPages; page++) {
+        buttons += `<button class="page-btn ${page === state.page ? 'is-current' : ''}" type="button" data-page="${page}">${page}</button>`;
+      }
+      buttons += `<button class="page-btn" type="button" data-page="next" ${state.page === totalPages ? 'disabled' : ''}>Next</button>`;
+      pagination.innerHTML = buttons;
+    }
+
+    function render() {
+      const items = visibleItems();
+      const pageSize = perPage();
+      const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+      state.page = Math.min(state.page, totalPages);
+      const start = (state.page - 1) * pageSize;
+      const pageItems = items.slice(start, start + pageSize);
+
+      counter.textContent = `${items.length} recursos`;
+      grid.innerHTML = pageItems.length ? pageItems.map(mediaMarkup).join('') : '<div class="empty">No hay recursos disponibles.</div>';
+      renderPagination(totalPages);
+      lazyLoadMedia();
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        state.filter = tab.dataset.filter;
+        state.page = 1;
+        tabs.forEach(item => item.classList.toggle('is-active', item === tab));
+        render();
+        document.getElementById('recursos').scrollIntoView({ block: 'start' });
+      });
+    });
+
+    pagination.addEventListener('click', event => {
+      const button = event.target.closest('[data-page]');
+      if (!button || button.disabled) return;
+      const items = visibleItems();
+      const totalPages = Math.max(1, Math.ceil(items.length / perPage()));
+      const target = button.dataset.page;
+      if (target === 'prev') state.page = Math.max(1, state.page - 1);
+      else if (target === 'next') state.page = Math.min(totalPages, state.page + 1);
+      else state.page = Number(target) || 1;
+      render();
+      document.getElementById('recursos').scrollIntoView({ block: 'start' });
+    });
+
+    window.addEventListener('resize', () => {
+      window.clearTimeout(window.__resourceResize);
+      window.__resourceResize = window.setTimeout(render, 120);
+    });
+
+    render();
+
+    // ─── Lightbox ───
+    let lb = document.getElementById('lightbox');
+    if (!lb) {
+      lb = document.createElement('div');
+      lb.id = 'lightbox';
+      lb.className = 'lightbox';
+      lb.setAttribute('role', 'dialog');
+      lb.setAttribute('aria-modal', 'true');
+      lb.setAttribute('aria-label', 'Imagen ampliada');
+      lb.innerHTML = '<div class="lightbox-overlay" id="lightbox-overlay"></div><div class="lightbox-frame" id="lightbox-frame"><img id="lightbox-img" src="" alt=""><button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">&#215;</button></div>';
+      document.body.appendChild(lb);
+    }
+    const lbImg = document.getElementById('lightbox-img');
+    const lbFrame = document.getElementById('lightbox-frame');
+    const lbCloseBtn = document.getElementById('lightbox-close');
+    let activeLightboxImage = null;
+    let lightboxAnimation = null;
+
+    function applyFrameBase(rect) {
+      lbFrame.style.left = '0px';
+      lbFrame.style.top = '0px';
+      lbFrame.style.width = `${rect.width}px`;
+      lbFrame.style.height = `${rect.height}px`;
+    }
+
+    function getTargetRect(sourceImg) {
+      const vw = window.innerWidth || document.documentElement.clientWidth;
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const margin = vw <= 620 ? 18 : 42;
+      const maxW = vw - margin * 2;
+      const maxH = vh - margin * 2;
+      const sourceRect = sourceImg.getBoundingClientRect();
+      const ratio = (lbImg.naturalWidth && lbImg.naturalHeight)
+        ? lbImg.naturalWidth / lbImg.naturalHeight
+        : Math.max(.2, sourceRect.width / Math.max(1, sourceRect.height));
+      let width = maxW;
+      let height = width / ratio;
+      if (height > maxH) {
+        height = maxH;
+        width = height * ratio;
+      }
+      return {
+        left: (vw - width) / 2,
+        top: (vh - height) / 2,
+        width,
+        height
+      };
+    }
+
+    function matrixFromTo(fromRect, toRect) {
+      const sx = fromRect.width / Math.max(1, toRect.width);
+      const sy = fromRect.height / Math.max(1, toRect.height);
+      return {
+        start: `translate3d(${fromRect.left}px, ${fromRect.top}px, 0) scale(${sx}, ${sy})`,
+        end: `translate3d(${toRect.left}px, ${toRect.top}px, 0) scale(1, 1)`
+      };
+    }
+
+    function lbOpen(sourceImg) {
+      const src = sourceImg.currentSrc || sourceImg.src || sourceImg.dataset.src;
+      if (!src) return;
+      if (lightboxAnimation) lightboxAnimation.cancel();
+      activeLightboxImage = sourceImg;
+      const startRect = sourceImg.getBoundingClientRect();
+      lbImg.onload = null;
+      lbImg.src = src;
+      lbImg.alt = sourceImg.alt || '';
+      lb.classList.remove('is-closing', 'is-expanded');
+      lb.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      sourceImg.classList.add('is-lightbox-source');
+
+      const animateOpen = () => {
+        const targetRect = getTargetRect(sourceImg);
+        const motion = matrixFromTo(startRect, targetRect);
+        applyFrameBase(targetRect);
+        lbFrame.style.transform = motion.start;
+        lbFrame.getBoundingClientRect();
+        lightboxAnimation = lbFrame.animate([
+          { transform: motion.start, borderRadius: '6px' },
+          { transform: motion.end, borderRadius: '0px' }
+        ], {
+          duration: 1100,
+          easing: 'cubic-bezier(.16,1,.3,1)',
+          fill: 'forwards'
+        });
+        lightboxAnimation.onfinish = () => {
+          lbFrame.style.transform = motion.end;
+          lb.classList.add('is-expanded');
+          lightboxAnimation = null;
+        };
+        lightboxAnimation.oncancel = () => {
+          lightboxAnimation = null;
+        };
+        lb.animate([
+          { opacity: 0 },
+          { opacity: 1 }
+        ], {
+          duration: 220,
+          easing: 'linear',
+          fill: 'forwards'
+        });
+      };
+
+      if (lbImg.complete && lbImg.naturalWidth) animateOpen();
+      else lbImg.onload = animateOpen;
+    }
+
+    function lbClose() {
+      if (!lb.classList.contains('is-open')) return;
+      if (lightboxAnimation) lightboxAnimation.cancel();
+      const targetRect = activeLightboxImage && document.body.contains(activeLightboxImage)
+        ? activeLightboxImage.getBoundingClientRect()
+        : lbFrame.getBoundingClientRect();
+      const currentRect = lbFrame.getBoundingClientRect();
+      const motion = matrixFromTo(targetRect, currentRect);
+      lb.classList.remove('is-expanded');
+      lb.classList.add('is-closing');
+      applyFrameBase(currentRect);
+      lbFrame.style.transform = motion.end;
+      lbFrame.getBoundingClientRect();
+      lightboxAnimation = lbFrame.animate([
+        { transform: motion.end, borderRadius: '0px' },
+        { transform: motion.start, borderRadius: '6px' }
+      ], {
+          duration: 900,
+        easing: 'cubic-bezier(.16,1,.3,1)',
+        fill: 'forwards'
+      });
+      lb.animate([
+        { opacity: 1 },
+        { opacity: 0 }
+      ], {
+        duration: 900,
+        easing: 'cubic-bezier(.16,1,.3,1)',
+        fill: 'forwards'
+      });
+      lightboxAnimation.onfinish = () => {
+        activeLightboxImage?.classList.remove('is-lightbox-source');
+        lb.classList.remove('is-open', 'is-closing');
+        lbImg.onload = null;
+        lbImg.src = '';
+        activeLightboxImage = null;
+        lbFrame.removeAttribute('style');
+        document.body.style.overflow = '';
+        lightboxAnimation = null;
+      };
+      lightboxAnimation.oncancel = () => {
+        activeLightboxImage?.classList.remove('is-lightbox-source');
+        lightboxAnimation = null;
+      };
+    }
+
+    window.addEventListener('resize', () => {
+      if (!lb.classList.contains('is-open') || !activeLightboxImage) return;
+      const targetRect = getTargetRect(activeLightboxImage);
+      applyFrameBase(targetRect);
+      lbFrame.style.transform = `translate3d(${targetRect.left}px, ${targetRect.top}px, 0) scale(1, 1)`;
+    });
+
+    lb.addEventListener('click', e => {
+      if (e.target.closest('#lightbox-frame') || e.target.closest('#lightbox-close')) return;
+      lbClose();
+    });
+    lbCloseBtn.addEventListener('click', e => { e.stopPropagation(); lbClose(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && lb.classList.contains('is-open')) lbClose(); });
+
+    grid.addEventListener('click', e => {
+      const card = e.target.closest('.media-card.is-photo');
+      if (!card) return;
+      const img = card.querySelector('img.lazy-media');
+      if (!img) return;
+      lbOpen(img);
+    });
+  </script>
+
+</body>
+</html>

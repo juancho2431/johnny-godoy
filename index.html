@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Johnny Godoy</title>
-  <link rel="icon" type="image/webp" href="assets/logos/favicon-jg-dorado.png">
+  <link rel="icon" type="image/png" href="assets/logos/favicon-jg-dorado.png">
   <link rel="apple-touch-icon" href="assets/logos/favicon-jg-dorado.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
 
@@ -30,8 +30,8 @@
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
       --mono: 'DM Mono', monospace;
-      --hero-image: url("assets/hero/hero-pc.webp");
-      --bio-image: url("assets/bio/bio-pc.webp");
+      --hero-image: url("assets/hero/hero-pc.png");
+      --bio-image: url("assets/bio/bio-pc.png");
       --hero-image-offset: 0px;
       --hero-image-position: center top;
       --nav-space: 92px;
@@ -84,6 +84,7 @@
       background-position: var(--hero-image-position);
       background-repeat: no-repeat;
       backface-visibility: hidden;
+      contain: layout paint size;
       transform: translateZ(0);
       will-change: transform, width, height, opacity;
       transition: none;
@@ -385,7 +386,7 @@
       max-width: 1300px; margin: 0 auto;
       padding: 120px 60px 100px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 90px;
-      align-items: center;
+      align-items: start;
     }
 
     /* Photo side — slides in from left on scroll */
@@ -448,7 +449,13 @@
       animation: bio-text-in linear both;
       animation-timeline: view(block);
       animation-range: entry 5% entry 50%;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(200,168,75,.35) rgba(200,168,75,.06);
     }
+    .bio-text-col::-webkit-scrollbar { width: 4px; }
+    .bio-text-col::-webkit-scrollbar-track { background: rgba(200,168,75,.06); }
+    .bio-text-col::-webkit-scrollbar-thumb { background: rgba(200,168,75,.35); border-radius: 2px; }
     @keyframes bio-text-in {
       from { opacity:0; transform:translateX(60px); }
       to   { opacity:1; transform:translateX(0); }
@@ -611,6 +618,11 @@
       min-height: 420px;
       display: flex;
       align-items: center;
+      touch-action: pan-y;
+      user-select: none;
+    }
+    .tracks-wrapper.is-dragging .tracks-row {
+      transition: none;
     }
     .tracks-row {
       display: flex;
@@ -673,7 +685,7 @@
       aspect-ratio: 1.16;
       background:
         linear-gradient(180deg, rgba(200,168,75,.08), rgba(0,0,0,.32)),
-        var(--cover, url("assets/hero/hero-pc.webp"));
+        var(--cover, url("assets/hero/hero-pc.png"));
       background-size: cover;
       background-position: center;
       display: flex;
@@ -767,22 +779,7 @@
       border-bottom: 1px solid rgba(200,168,75,.28);
     }
     .track-source:hover { color: var(--gold2); }
-    .soundtrack-nav {
-      position: absolute;
-      top: 48%;
-      z-index: 20;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1px solid rgba(200,168,75,.56);
-      background: rgba(13,10,7,.72);
-      color: var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: none;
-      transition: transform .25s, background .25s;
-    }
+    .soundtrack-nav { display: none; }
     .soundtrack-nav:hover {
       transform: translateY(-2px);
       background: rgba(200,168,75,.12);
@@ -891,6 +888,23 @@
       fill: currentColor;
     }
     .player-mini:hover { color: var(--gold); border-color: rgba(200,168,75,.5); }
+    .player-speed {
+      height: 34px;
+      min-width: 72px;
+      border: 1px solid rgba(200,168,75,.24);
+      background: rgba(13,10,7,.72);
+      color: rgba(232,204,122,.92);
+      font-family: var(--mono);
+      font-size: .58rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 0 8px;
+      outline: none;
+      cursor: none;
+    }
+    .player-speed:focus {
+      border-color: rgba(200,168,75,.58);
+    }
 
     /* ════════════════════════════════════════
        GALLERY — SCROLL STAGGER REVEALS
@@ -900,6 +914,32 @@
     }
     .galeria-head {
       padding: 0 60px; margin-bottom: 44px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .gallery-more {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 18px;
+      border: 1px solid rgba(200,168,75,.35);
+      color: var(--gold);
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: .62rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      background: rgba(200,168,75,.06);
+      transition: background .25s, color .25s, transform .25s;
+    }
+    .gallery-more:hover {
+      background: var(--gold);
+      color: var(--bg);
+      transform: translateY(-2px);
     }
     .gallery-grid {
       display: grid;
@@ -943,6 +983,19 @@
       opacity: 0; transition: opacity .4s;
     }
     .g-item:hover::after { opacity: 1; }
+    .g-item img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: var(--focus, center center) !important;
+      display: block;
+      z-index: 0;
+    }
+    .g-item:nth-child(1) img { --focus: 42% 34%; }
+    .g-item:nth-child(2) img { --focus: center 18%; }
+    .g-item:nth-child(3) img { --focus: 48% 18%; }
+    .g-item:nth-child(4) img { --focus: center 42%; }
+    .g-item:nth-child(5) img { --focus: center 18%; }
 
     /* ════════════════════════════════════════
        SERVICIOS — STICKY HORIZONTAL SCROLL
@@ -1123,25 +1176,29 @@
        VIDEO
     ════════════════════════════════════════ */
     #video {
-      padding: 110px 60px 100px;
+      padding: 64px 60px 72px;
       background:
         linear-gradient(180deg, var(--bg), rgba(26,20,16,.86) 48%, var(--bg));
       position: relative;
       overflow: hidden;
     }
     .video-head {
-      margin-bottom: 44px;
+      margin-bottom: 24px;
       opacity: 0; transform: translateY(34px);
       animation: video-head-in linear both;
       animation-timeline: view(block);
       animation-range: entry 0% entry 36%;
+    }
+    #video .section-title {
+      font-size: clamp(1.85rem, 3.8vw, 3.35rem);
     }
     @keyframes video-head-in {
       from { opacity:0; transform:translateY(34px); }
       to   { opacity:1; transform:translateY(0); }
     }
     .video-box {
-      width: 100%; aspect-ratio: 16/9;
+      width: min(100%, 920px); aspect-ratio: 16/9;
+      margin: 0 auto;
       background: var(--bg3); position: relative; overflow: hidden;
       display: flex; align-items: center; justify-content: center;
       cursor: none;
@@ -1413,8 +1470,8 @@
     ════════════════════════════════════════ */
 @media (max-width: 900px) {
       :root {
-        --hero-image: url("assets/hero/hero-tablet.webp");
-        --bio-image: url("assets/bio/bio-tablet.webp");
+        --hero-image: url("assets/hero/hero-tablet.png");
+        --bio-image: url("assets/bio/bio-tablet.png");
         --hero-image-offset: 0px;
         --nav-space: 72px;
       }
@@ -1448,10 +1505,12 @@
       .hero-scroll-hint { display: none; }
       #bio { grid-template-columns: 1fr; gap: 44px; padding: 80px 24px; }
       .bio-photo-col { width: min(100%, 360px); max-width: 360px; margin: 0 auto; }
+      .bio-text-col { max-height: none !important; overflow-y: visible; }
       .bio-large-num { font-size: 9rem; right: -10px; bottom: -30px; }
       .musica-header { padding: 0 24px; }
       .tracks-wrapper { padding: 0 24px; }
       .galeria-head, .services-header, .services-wrapper, #video, #contacto { padding-left: 24px; padding-right: 24px; }
+      .galeria-head { align-items: flex-start; }
       .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
       .g-item:nth-child(1) { grid-column: span 2; grid-row: span 1; height: 260px; }
       .g-item { height: 200px; }
@@ -1464,8 +1523,8 @@
     ════════════════════════════════════════ */
     @media (max-width: 600px) {
       :root {
-        --hero-image: url("assets/hero/hero-celular.webp");
-        --bio-image: url("assets/bio/bio-celular.webp");
+        --hero-image: url("assets/hero/hero-celular.png");
+        --bio-image: url("assets/bio/bio-celular.png");
         --hero-image-offset: 0px;
         --nav-space: 64px;
       }
@@ -1579,6 +1638,7 @@
       }
       .player-toggle { width: 46px; height: 46px; }
       .player-mini { width: 32px; height: 32px; }
+      .player-speed { width: 74px; height: 32px; font-size: .52rem; }
       .player-title { font-size: .96rem; }
       .player-meta { font-size: .5rem; letter-spacing: .12em; }
       .player-progress {
@@ -1590,11 +1650,7 @@
       #galeria { padding: 34px 0 78px; }
       .galeria-head { padding: 0 20px; }
       .gallery-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
-      .g-item:nth-child(1),
-      .g-item:nth-child(2),
-      .g-item:nth-child(3),
-      .g-item:nth-child(4),
-      .g-item:nth-child(5) { grid-column: span 1; height: 220px; }
+      .g-item { grid-column: span 1; height: 220px; }
 
       /* Servicios — lista vertical en móvil */
       #servicios-scene { height: auto !important; }
@@ -1631,7 +1687,7 @@
       .service-details { font-size: .88rem; line-height: 1.5; }
 
       /* Video */
-      #video { padding: 80px 20px; }
+      #video { padding: 52px 20px 58px; }
 
       /* Contacto */
       #contacto { padding: 100px 20px 80px; }
@@ -1647,7 +1703,7 @@
     @media (hover: none) {
       body { cursor: auto !important; }
       #cur, #cur-ring { display: none !important; }
-      .btn, .service-btn, .track-card, .track-play, .soundtrack-nav, .player-toggle, .player-mini,
+      .btn, .service-btn, .track-card, .track-play, .player-toggle, .player-mini, .player-speed,
       .progress-track, .video-box, .g-item, .service-card, .contact-submit, .float-btn { cursor: pointer !important; }
       .track-play { opacity: 1; }
       .track-hover-overlay { opacity: 0.28; }
@@ -1695,6 +1751,7 @@
     <li><a href="#video">Bienvenida</a></li>
     <li><a href="#musica-scene">Música</a></li>
     <li><a href="#galeria">Galería</a></li>
+    <li><a href="recursos.html">Recursos</a></li>
     <li><a href="#servicios-scene">Servicios</a></li>
     <li><a href="#contacto">Contacto</a></li>
   </ul>
@@ -1710,9 +1767,9 @@
   <div class="hero-photo-wrap">
     <div class="hero-photo-box">
       <picture class="hero-picture">
-        <source media="(max-width: 600px)" srcset="assets/hero/hero-celular.webp">
-        <source media="(max-width: 900px)" srcset="assets/hero/hero-tablet.webp">
-        <img src="assets/hero/hero-pc.webp" alt="Johnny Godoy">
+        <source media="(max-width: 600px)" srcset="assets/hero/hero-celular.png">
+        <source media="(max-width: 900px)" srcset="assets/hero/hero-tablet.png">
+        <img src="assets/hero/hero-pc.png" alt="Johnny Godoy">
       </picture>
     </div>
     <div class="hero-glow"></div>
@@ -1827,7 +1884,7 @@
     <div class="v-corner tr"></div>
     <div class="v-corner bl"></div>
     <div class="v-corner br"></div>
-    <video class="video-media" controls playsinline preload="metadata" poster="assets/hero/hero-pc.webp">
+    <video class="video-media" controls playsinline preload="metadata" poster="assets/logos/poster-bienvenida-favicon.png">
       <source src="assets/video/johnny_bienvenida_h264.mp4" type="video/mp4">
       Tu navegador no puede reproducir este video.
     </video>
@@ -1947,6 +2004,12 @@
           <button class="player-mini" id="player-next" type="button" aria-label="Siguiente soundtrack">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6h2v12h-2zm-10 6 8.5 6V6z"/></svg>
           </button>
+          <select class="player-speed" id="player-speed" aria-label="Velocidad de reproduccion">
+            <option value="0.75">0.75x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+          </select>
         </div>
         <div class="player-progress">
           <span id="player-current">0:00</span>
@@ -1964,15 +2027,28 @@
 <!-- GALERÍA -->
 <section id="galeria">
   <div class="galeria-head">
-    <p class="section-label">Momentos</p>
-    <h2 class="section-title">Galería</h2>
+    <div>
+      <p class="section-label">Momentos</p>
+      <h2 class="section-title">Galería</h2>
+    </div>
+    <a class="gallery-more" href="recursos.html">Ver mas</a>
   </div>
   <div class="gallery-grid">
-    <div class="g-item"><div class="g-label">escenario\nfoto principal</div></div>
-    <div class="g-item"><div class="g-label">en vivo</div></div>
-    <div class="g-item"><div class="g-label">backstage</div></div>
-    <div class="g-item"><div class="g-label">retrato</div></div>
-    <div class="g-item"><div class="g-label">show cali</div></div>
+    <div class="g-item">
+      <img src="assets/fotos/index/_JUN0125.jpg" alt="Noche de escenario encendido" loading="lazy" decoding="async">
+    </div>
+    <div class="g-item">
+      <img src="assets/fotos/index/TPLM2832.jpg" alt="Tarima tropical en vivo" loading="lazy" decoding="async">
+    </div>
+    <div class="g-item">
+      <img src="assets/fotos/index/IMG_4813.jpg" alt="Intensidad en cada nota" loading="lazy" decoding="async">
+    </div>
+    <div class="g-item">
+      <img src="assets/fotos/index/OWDB8683.jpg" alt="La banda completa en acción" loading="lazy" decoding="async">
+    </div>
+    <div class="g-item">
+      <img src="assets/fotos/index/IMG_2017.jpg" alt="Sobre las tablas del escenario" loading="lazy" decoding="async">
+    </div>
   </div>
 </section>
 
@@ -2137,10 +2213,10 @@
     <img src="assets/logos/logo-nombre-completo-dorado.png" alt="Johnny Godoy">
   </div>
   <div class="footer-links">
-    <a href="#" title="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-    <a href="#" title="Spotify"><svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a>
-    <a href="#" title="YouTube"><svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg></a>
-    <a href="#" title="TikTok"><svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+    <a href="https://www.instagram.com/johnnygcantante/" title="Instagram" aria-label="Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+    <a href="https://open.spotify.com/intl-es/" title="Spotify" aria-label="Spotify" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a>
+    <a href="https://www.youtube.com/@johnnygcantante8897" title="YouTube" aria-label="YouTube" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg></a>
+    <a href="https://www.tiktok.com/@johnnygcantante" title="TikTok" aria-label="TikTok" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
   </div>
   <div class="footer-cr">© 2025 Johnny Godoy</div>
 </footer>
@@ -2166,7 +2242,7 @@
   let mx=0,my=0,rx=0,ry=0;
   document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
   (function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
-  document.querySelectorAll('a,.track-card,.track-play,.soundtrack-nav,.player-toggle,.player-mini,.progress-track,.service-card,.video-box,.g-item,.service-btn,.contact-submit,.float-btn,.btn').forEach(el=>{
+  document.querySelectorAll('a,.track-card,.track-play,.player-toggle,.player-mini,.player-speed,.progress-track,.service-card,.video-box,.g-item,.gallery-more,.service-btn,.contact-submit,.float-btn,.btn').forEach(el=>{
     el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
     el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
   });
@@ -2182,7 +2258,29 @@
     heroContent.style.opacity = String(Math.max(0, 1 - p * 2));
     heroContent.style.transform = 'translateY(' + (-p * 60) + 'px)';
   }
-  window.addEventListener('scroll', updateHeroExit, { passive: true });
+  let heroExitRaf = 0;
+  function scheduleHeroExit() {
+    if (heroExitRaf) return;
+    heroExitRaf = requestAnimationFrame(() => {
+      heroExitRaf = 0;
+      updateHeroExit();
+    });
+  }
+  window.addEventListener('scroll', scheduleHeroExit, { passive: true });
+
+  // ─── BIO: sincronizar altura de texto con foto ───
+  const bioPBox = document.querySelector('.bio-photo-box');
+  const bioTCol = document.querySelector('.bio-text-col');
+  function syncBioHeight() {
+    if (!bioPBox || !bioTCol) return;
+    if (window.innerWidth <= 900) { bioTCol.style.maxHeight = ''; return; }
+    const h = bioPBox.getBoundingClientRect().height;
+    if (h > 0) bioTCol.style.maxHeight = h + 'px';
+  }
+  if (bioPBox) new ResizeObserver(syncBioHeight).observe(bioPBox);
+  window.addEventListener('resize', syncBioHeight);
+  window.addEventListener('load', syncBioHeight);
+  requestAnimationFrame(() => requestAnimationFrame(syncBioHeight));
 
   // ─── MORPH PHOTO: hero → bio ───
   const morphEl = document.getElementById('morph-photo');
@@ -2203,7 +2301,7 @@
   }
 
   function lerp(a, b, t) { return a + (b - a) * t; }
-  function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+  function ease(t) { return 1 - Math.pow(1 - t, 3); }
   function heroImageOffset() {
     const value = getComputedStyle(document.documentElement).getPropertyValue('--hero-image-offset');
     const offset = parseFloat(value);
@@ -2222,9 +2320,9 @@
     const scroll = window.scrollY;
     const viewportH = window.innerHeight || document.documentElement.clientHeight;
     const compactMorph = window.innerWidth <= 900 || window.matchMedia('(pointer: coarse)').matches;
-    const transStart = Math.max(compactMorph ? 72 : 48, heroBottom - viewportH * 0.92);
-    const targetReveal = compactMorph ? 0.58 : 0.54;
-    const minTravel = viewportH * (compactMorph ? 0.34 : 0.36);
+    const transStart = Math.max(compactMorph ? 56 : 48, heroBottom - viewportH * (compactMorph ? 0.98 : 0.92));
+    const targetReveal = compactMorph ? 0.46 : 0.54;
+    const minTravel = viewportH * (compactMorph ? 0.54 : 0.36);
     const transEnd = Math.max(
       transStart + minTravel,
       bioRect.top - viewportH * targetReveal
@@ -2288,15 +2386,24 @@
     }
   }
 
-  window.addEventListener('scroll', updateMorph, { passive: true });
-  window.addEventListener('resize', () => { heroRect = null; updateMorph(); });
+  let morphRaf = 0;
+  function scheduleMorph() {
+    if (morphRaf) return;
+    morphRaf = requestAnimationFrame(() => {
+      morphRaf = 0;
+      updateMorph();
+    });
+  }
+
+  window.addEventListener('scroll', scheduleMorph, { passive: true });
+  window.addEventListener('resize', () => { heroRect = null; scheduleMorph(); });
   window.addEventListener('orientationchange', () => {
     heroRect = null;
-    setTimeout(updateMorph, 250);
+    setTimeout(scheduleMorph, 250);
   });
   if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', updateMorph, { passive: true });
-    window.visualViewport.addEventListener('scroll', updateMorph, { passive: true });
+    window.visualViewport.addEventListener('resize', scheduleMorph, { passive: true });
+    window.visualViewport.addEventListener('scroll', scheduleMorph, { passive: true });
   }
   // Initial position
   setTimeout(() => { getRects(); updateMorph(); }, 100);
@@ -2313,11 +2420,14 @@
   const playerDuration = document.getElementById('player-duration');
   const playerProgress = document.getElementById('player-progress');
   const playerProgressFill = document.getElementById('player-progress-fill');
+  const playerSpeed = document.getElementById('player-speed');
   const servicesScene = document.getElementById('servicios-scene');
   const servicesSticky = document.getElementById('servicios-sticky');
   const servicesWrapper = document.querySelector('.services-wrapper');
   const servicesRow = document.getElementById('services-row');
   let activeTrack = 2;
+  let trackBaseTranslate = 0;
+  let carouselWasDragged = false;
 
   function formatTime(value) {
     if (!Number.isFinite(value)) return '0:00';
@@ -2353,7 +2463,8 @@
     const activeCard = trackCards[activeTrack];
     const cardCenter = activeCard.offsetLeft + activeCard.offsetWidth / 2;
     const wrapperCenter = tracksWrapper.clientWidth / 2;
-    tracksRow.style.transform = `translateX(${wrapperCenter - cardCenter}px)`;
+    trackBaseTranslate = wrapperCenter - cardCenter;
+    tracksRow.style.transform = `translateX(${trackBaseTranslate}px)`;
 
     playerTitle.textContent = activeCard.dataset.title || '';
     playerMeta.textContent = `${activeCard.dataset.author || ''} · ${activeCard.dataset.year || ''} · ${activeCard.dataset.genre || ''}`;
@@ -2363,6 +2474,7 @@
     if (soundtrackAudio.src !== nextUrl) {
       soundtrackAudio.src = nextUrl;
       soundtrackAudio.load();
+      soundtrackAudio.playbackRate = Number(playerSpeed?.value || 1);
       playerCurrent.textContent = '0:00';
       playerDuration.textContent = '0:00';
       playerProgressFill.style.width = '0%';
@@ -2381,12 +2493,18 @@
     if (window.innerWidth <= 600) { servicesRow.style.transform = ''; return; }
     const rect = servicesScene.getBoundingClientRect();
     const sceneH = servicesScene.offsetHeight;
-    const viewH = window.innerHeight;
-    const travel = Math.max(1, sceneH - viewH);
-    const start = viewH * .22;
-    const end = Math.max(start + 1, travel - viewH * .18);
+    const viewH = window.innerHeight || document.documentElement.clientHeight;
+    const stickyH = servicesSticky.offsetHeight || viewH;
+    const travel = Math.max(1, sceneH - stickyH);
+    const start = Math.min(viewH * .22, travel * .12);
+    const end = Math.max(start + 1, travel - Math.min(viewH * .12, travel * .08));
     const progress = Math.max(0, Math.min(1, (-rect.top - start) / (end - start)));
-    const maxScroll = Math.max(0, servicesRow.scrollWidth - servicesWrapper.clientWidth);
+    const wrapperStyle = getComputedStyle(servicesWrapper);
+    const wrapperPadding =
+      (parseFloat(wrapperStyle.paddingLeft) || 0) +
+      (parseFloat(wrapperStyle.paddingRight) || 0);
+    const visibleWidth = Math.max(1, servicesWrapper.clientWidth - wrapperPadding);
+    const maxScroll = Math.max(0, servicesRow.scrollWidth - visibleWidth);
     servicesRow.style.transform = `translateX(${-progress * maxScroll}px)`;
   }
 
@@ -2400,6 +2518,11 @@
 
   trackCards.forEach((card, index) => {
     card.addEventListener('click', e => {
+      if (carouselWasDragged) {
+        e.preventDefault();
+        carouselWasDragged = false;
+        return;
+      }
       if (e.target.closest('.track-source')) return;
       const wasActive = index === activeTrack;
       const wasPlaying = !soundtrackAudio.paused;
@@ -2410,6 +2533,49 @@
       else soundtrackAudio.play().catch(() => {});
     });
   });
+
+  if (tracksWrapper && tracksRow) {
+    let dragStartX = 0;
+    let dragDeltaX = 0;
+    let isDraggingCarousel = false;
+
+    function finishCarouselDrag() {
+      if (!isDraggingCarousel) return;
+      isDraggingCarousel = false;
+      tracksWrapper.classList.remove('is-dragging');
+      const threshold = Math.min(90, Math.max(42, tracksWrapper.clientWidth * 0.12));
+      if (Math.abs(dragDeltaX) > threshold) {
+        setActiveTrack(activeTrack + (dragDeltaX < 0 ? 1 : -1), !soundtrackAudio.paused);
+        carouselWasDragged = true;
+      } else {
+        setActiveTrack(activeTrack, !soundtrackAudio.paused);
+      }
+      window.setTimeout(() => { carouselWasDragged = false; }, 120);
+    }
+
+    tracksWrapper.addEventListener('pointerdown', e => {
+      if (e.target.closest('.track-source')) return;
+      isDraggingCarousel = true;
+      dragStartX = e.clientX;
+      dragDeltaX = 0;
+      tracksWrapper.classList.add('is-dragging');
+      tracksWrapper.setPointerCapture?.(e.pointerId);
+    });
+
+    tracksWrapper.addEventListener('pointermove', e => {
+      if (!isDraggingCarousel) return;
+      dragDeltaX = e.clientX - dragStartX;
+      if (Math.abs(dragDeltaX) > 6) {
+        carouselWasDragged = true;
+        e.preventDefault();
+      }
+      tracksRow.style.transform = `translateX(${trackBaseTranslate + dragDeltaX}px)`;
+    });
+
+    tracksWrapper.addEventListener('pointerup', finishCarouselDrag);
+    tracksWrapper.addEventListener('pointercancel', finishCarouselDrag);
+    tracksWrapper.addEventListener('lostpointercapture', finishCarouselDrag);
+  }
 
   document.getElementById('soundtrack-prev')?.addEventListener('click', () => setActiveTrack(activeTrack - 1, !soundtrackAudio.paused));
   document.getElementById('soundtrack-next')?.addEventListener('click', () => setActiveTrack(activeTrack + 1, !soundtrackAudio.paused));
@@ -2422,8 +2588,15 @@
     else soundtrackAudio.pause();
   });
 
+  playerSpeed?.addEventListener('change', () => {
+    const rate = Number(playerSpeed.value) || 1;
+    soundtrackAudio.defaultPlaybackRate = rate;
+    soundtrackAudio.playbackRate = rate;
+  });
+
   soundtrackAudio?.addEventListener('loadedmetadata', () => {
     playerDuration.textContent = formatTime(soundtrackAudio.duration);
+    soundtrackAudio.playbackRate = Number(playerSpeed?.value || 1);
   });
   soundtrackAudio?.addEventListener('timeupdate', () => {
     const duration = soundtrackAudio.duration || 0;
@@ -2462,7 +2635,7 @@
   }));
 
   // Recalcular morph y scroll al redimensionar
-  window.addEventListener('resize', () => { heroRect = null; updateMorph(); updateHorizontalScrolls(); });
+  window.addEventListener('resize', () => { heroRect = null; scheduleMorph(); updateHorizontalScrolls(); });
 
   const whatsappNumber = '573125863585';
   function whatsappUrl(message) {
