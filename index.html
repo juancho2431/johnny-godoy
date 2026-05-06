@@ -2601,9 +2601,11 @@
   const servicesSticky = document.getElementById('servicios-sticky');
   const servicesWrapper = document.querySelector('.services-wrapper');
   const servicesRow = document.getElementById('services-row');
+  const serviceCards = Array.from(document.querySelectorAll('.service-card'));
   let activeTrack = 2;
   let trackBaseTranslate = 0;
   let carouselWasDragged = false;
+  let trackPointerSelected = false;
 
   function formatTime(value) {
     if (!Number.isFinite(value)) return '0:00';
@@ -2664,9 +2666,29 @@
     }
   }
 
+  function selectTrackFromCard(index, target) {
+    if (!soundtrackAudio) return;
+    const wasActive = index === activeTrack;
+    const wasPlaying = !soundtrackAudio.paused;
+    const playRequested = Boolean(target?.closest?.('.track-play')) || wasActive;
+    setActiveTrack(index, false);
+    if (!playRequested) return;
+    if (wasActive && wasPlaying) soundtrackAudio.pause();
+    else soundtrackAudio.play().catch(() => {});
+  }
+
   function updateServicesHScroll(){
     if (!servicesScene || !servicesSticky || !servicesWrapper || !servicesRow) return;
     if (window.innerWidth <= 600) { servicesRow.style.transform = ''; return; }
+    const metrics = getServicesHScrollMetrics();
+    if (!metrics) return;
+    const progress = Math.max(0, Math.min(1, (-metrics.rect.top - metrics.start) / (metrics.end - metrics.start)));
+    const maxScroll = metrics.maxScroll;
+    servicesRow.style.transform = `translateX(${-progress * maxScroll}px)`;
+  }
+
+  function getServicesHScrollMetrics() {
+    if (!servicesScene || !servicesSticky || !servicesWrapper || !servicesRow) return null;
     const rect = servicesScene.getBoundingClientRect();
     const sceneH = servicesScene.offsetHeight;
     const viewH = window.innerHeight || document.documentElement.clientHeight;
@@ -2674,14 +2696,27 @@
     const travel = Math.max(1, sceneH - stickyH);
     const start = Math.min(viewH * .22, travel * .12);
     const end = Math.max(start + 1, travel - Math.min(viewH * .12, travel * .08));
-    const progress = Math.max(0, Math.min(1, (-rect.top - start) / (end - start)));
     const wrapperStyle = getComputedStyle(servicesWrapper);
-    const wrapperPadding =
-      (parseFloat(wrapperStyle.paddingLeft) || 0) +
-      (parseFloat(wrapperStyle.paddingRight) || 0);
-    const visibleWidth = Math.max(1, servicesWrapper.clientWidth - wrapperPadding);
+    const paddingLeft = parseFloat(wrapperStyle.paddingLeft) || 0;
+    const paddingRight = parseFloat(wrapperStyle.paddingRight) || 0;
+    const visibleWidth = Math.max(1, servicesWrapper.clientWidth - paddingLeft - paddingRight);
     const maxScroll = Math.max(0, servicesRow.scrollWidth - visibleWidth);
-    servicesRow.style.transform = `translateX(${-progress * maxScroll}px)`;
+    return { rect, start, end, visibleWidth, maxScroll };
+  }
+
+  function scrollToServiceCard(card) {
+    if (window.innerWidth <= 600 || !card) return;
+    const metrics = getServicesHScrollMetrics();
+    if (!metrics || metrics.maxScroll <= 0) return;
+
+    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+    const targetTranslate = Math.max(-metrics.maxScroll, Math.min(0, metrics.visibleWidth / 2 - cardCenter));
+    const targetProgress = Math.max(0, Math.min(1, -targetTranslate / metrics.maxScroll));
+    const sceneTop = window.scrollY + metrics.rect.top;
+    window.scrollTo({
+      top: sceneTop + metrics.start + targetProgress * (metrics.end - metrics.start),
+      behavior: 'smooth'
+    });
   }
 
   function updateHorizontalScrolls(){
@@ -2694,19 +2729,18 @@
 
   trackCards.forEach((card, index) => {
     card.addEventListener('click', e => {
+      if (trackPointerSelected) {
+        e.preventDefault();
+        trackPointerSelected = false;
+        return;
+      }
       if (carouselWasDragged) {
         e.preventDefault();
         carouselWasDragged = false;
         return;
       }
       if (e.target.closest('.track-source')) return;
-      const wasActive = index === activeTrack;
-      const wasPlaying = !soundtrackAudio.paused;
-      const playRequested = Boolean(e.target.closest('.track-play')) || wasActive;
-      setActiveTrack(index, false);
-      if (!playRequested) return;
-      if (wasActive && wasPlaying) soundtrackAudio.pause();
-      else soundtrackAudio.play().catch(() => {});
+      selectTrackFromCard(index, e.target);
     });
   });
 
@@ -2714,6 +2748,8 @@
     let dragStartX = 0;
     let dragDeltaX = 0;
     let isDraggingCarousel = false;
+    let pressedTrackCard = null;
+    let pressedTrackTarget = null;
 
     function finishCarouselDrag() {
       if (!isDraggingCarousel) return;
@@ -2723,10 +2759,19 @@
       if (Math.abs(dragDeltaX) > threshold) {
         setActiveTrack(activeTrack + (dragDeltaX < 0 ? 1 : -1), !soundtrackAudio.paused);
         carouselWasDragged = true;
+      } else if (pressedTrackCard) {
+        const pressedTrackIndex = trackCards.indexOf(pressedTrackCard);
+        if (pressedTrackIndex >= 0) {
+          selectTrackFromCard(pressedTrackIndex, pressedTrackTarget);
+          trackPointerSelected = true;
+        }
       } else {
         setActiveTrack(activeTrack, !soundtrackAudio.paused);
       }
+      pressedTrackCard = null;
+      pressedTrackTarget = null;
       window.setTimeout(() => { carouselWasDragged = false; }, 120);
+      window.setTimeout(() => { trackPointerSelected = false; }, 120);
     }
 
     tracksWrapper.addEventListener('pointerdown', e => {
@@ -2734,6 +2779,8 @@
       isDraggingCarousel = true;
       dragStartX = e.clientX;
       dragDeltaX = 0;
+      pressedTrackCard = e.target.closest('.track-card');
+      pressedTrackTarget = e.target;
       tracksWrapper.classList.add('is-dragging');
       tracksWrapper.setPointerCapture?.(e.pointerId);
     });
@@ -2757,6 +2804,13 @@
   document.getElementById('soundtrack-next')?.addEventListener('click', () => setActiveTrack(activeTrack + 1, !soundtrackAudio.paused));
   document.getElementById('player-prev')?.addEventListener('click', () => setActiveTrack(activeTrack - 1, true));
   document.getElementById('player-next')?.addEventListener('click', () => setActiveTrack(activeTrack + 1, true));
+
+  serviceCards.forEach(card => {
+    card.addEventListener('click', event => {
+      if (event.target.closest('.service-btn')) return;
+      scrollToServiceCard(card);
+    });
+  });
 
   playerToggle?.addEventListener('click', () => {
     if (!soundtrackAudio.src) setActiveTrack(activeTrack, false);
