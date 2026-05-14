@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://juancho2431.github.io/johnny-godoy/sitemap.xml
+Sitemap: https://johnny-godoy.vercel.app/sitemap.xml
